@@ -2,6 +2,7 @@ package Scale::Relationship;
 
 use strict;
 use warnings;
+use List::Util;
 
 sub merge {
     my $l_lr = shift;
