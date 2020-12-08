@@ -14,14 +14,14 @@ use YAML::Syck qw/Dump/;
 use Getopt::Long;
 use List::Util;
 use FindBin qw/$Bin/;
-use lib "$FindBin::Bin";
+use lib "$FindBin::Bin/lib/";
 use Scale::Relationship;
 
 GetOptions(
     "i|in=s"     => \(my $input),
     "o|out:s"    => \(my $output),
     "length=i"   => \(my $len_restrict = 100),
-    "identity=s" => \(my $identity),
+    "identity=i" => \(my $identity_restrict = 90),
     "help"       => \(my $help)
 );
 
@@ -64,9 +64,10 @@ while(<$f_h>){
     chomp;
     my @l = split /\t/,$_;
     my $query  = $l[0];
+    my $identity = $l[2];
     my $qstart = $l[6];
     my $qend   = $l[7];
-    if ( $qend - $qstart + 1 >= $len_restrict ){
+    if ( $qend - $qstart + 1 >= $len_restrict and $identity >= $identity_restrict ){
         push @{ $hash->{$query} } , [$qstart,$qend];
     }
 }
