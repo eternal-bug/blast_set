@@ -32,10 +32,10 @@ my @basic = qw/A G T C/;  # 4种核苷酸
 # tblastn将给定的氨基酸序列与核酸数据库中的序列（双链）按不同的阅读框进行比对，对于寻找数据库中序列没有标注的新编码区很有用
 
 my %blast_type_argument = (
-	blastn   => "F",
-	blastp   => "T",
-	tblastn  => "F",
-	blastx   => "T",
+	blastn   => "nucl",
+	blastp   => "prot",
+	tblastn  => "nucl",
+	blastx   => "prot",
 );
 
 my %query_sbjct = (
@@ -170,12 +170,13 @@ sub format{   # 对作为数据库的fasta文件进行格式化
 	# 先对数据库进行建立索引
 	opendir my $dic_fh,"$data_path" or die "Can't open the dictionary($input_database) : $!";
 	my @file_list = readdir ($dic_fh);
-	my $format_file_suffix = qr(nhr|nin|nsd|nsi|nsq); # 用来判断数据库文件是否被格式化了
+	my $format_file_suffix = qr(ndb|nhr|nin|nog|nos|not|nsq|ntf|nto); # 用来判断数据库文件是否被格式化了
 	if(scalar (grep {m/$data_name\.$format_file_suffix/} @file_list) < 5){
 		my $error = qr/\[NULL_Caption\]/o;
 		print "===> Start to format database file!\n";
 ##!!!!!!!!不知道此处的将formatdb的错误信息输出到标准输出中时候可以
-		open my $formatdb_out , "formatdb -i $input_database -p $format_type -a F -o T |";
+        open my $formatdb_out , "makeblastdb -in $input_database -dbtype $format_type -parse_seqids |";
+        
 		local $/ = undef;
 		my $capture_error = <$formatdb_out>;
 		if( $test =~ m/$error/){
@@ -197,7 +198,7 @@ sub allblast{
 	# my $tee_out_filename = File::Spec->catdir($out,File::Basename::basename($input_fasta) . File::Basename::basename($input_database) . ".txt");
 	printf "===> Start to %s\n",$blast_type;
 	# mkdir ($out) unless (-e $out);   # 新建结果文件夹
-	my $fruit = `blastall -p $blast_type -i $input_fasta -d $input_database -m 8 | tee $tee_out_filename`;
+	my $fruit = `$blast_type -query $input_fasta -db $input_database -outfmt 6 -out $tee_out_filename`;
 	return ($fruit,$blast_type);
 }
 
