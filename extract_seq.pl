@@ -9,8 +9,9 @@ use YAML::Syck;
 use Getopt::Long;
 use File::Spec;
 use FindBin qw/$Bin/;
-use lib "$FindBin::Bin";
+use lib "$FindBin::Bin/lib/";
 use Seq::Extract;
+use Seq::Transform;
 use Fasta::Read;
 
 
@@ -67,6 +68,7 @@ for my $title ( keys %$data ){
 sub out_fasta {
     my $title = shift;
     my $seq   = shift;
+    $seq = Seq::Transform::seq_wrap($seq);
     return sprintf(">%s\n%s\n", $title, $seq);
 }
 
@@ -110,5 +112,3 @@ sub LoadTxt {
     close $f_h;
     return $data;
 }
-
-
