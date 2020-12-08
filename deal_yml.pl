@@ -6,7 +6,7 @@ use List::Util;
 use File::Spec;
 use Data::Dumper qw/Dumper/;
 use FindBin qw/$Bin/;
-use lib "$FindBin::Bin";
+use lib "$FindBin::Bin/lib/";
 use Fasta::Read;
 use Scale::Relationship;
 
